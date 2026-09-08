@@ -29,8 +29,8 @@
                     <span class="text-xs text-gray-400">SESSION AGENT DID</span>
                     <p id="agent-did" class="text-xs text-emerald-400 font-mono">Generating Keypair...</p>
                 </div>
-                <button onclick="claimPaper()" class="px-3 py-1.5 bg-sky-950 hover:bg-sky-900 border border-sky-500 text-sky-300 rounded text-xs transition">
-                    + Claim 1,000 $PAPER
+                <button onclick="claimFlop()" class="px-3 py-1.5 bg-sky-950 hover:bg-sky-900 border border-sky-500 text-sky-300 rounded text-xs transition">
+                    + Claim 1,000 $FLOP
                 </button>
             </div>
         </header>
@@ -43,7 +43,7 @@
                 <div class="bg-gray-950 p-5 cyber-border rounded-lg cyber-glow space-y-4">
                     <div class="flex justify-between items-center border-b border-gray-800 pb-3">
                         <h2 class="text-sm font-semibold text-sky-400 tracking-widest uppercase">Active Escrow Proposals</h2>
-                        <span id="balance-display" class="text-xs bg-gray-900 px-2.5 py-1 rounded border border-gray-700 text-amber-400">Balance: 1,000 $PAPER</span>
+                        <span id="balance-display" class="text-xs bg-gray-900 px-2.5 py-1 rounded border border-gray-700 text-amber-400">Balance: 1,000 $FLOP</span>
                     </div>
                     <div id="escrow-container" class="space-y-4"></div>
                 </div>
@@ -84,7 +84,7 @@
         
         let userKeyPair = null;
         let userDID = "";
-        let paperBalance = 1000;
+        let flopBalance = 1000;
         
         let contracts = [
             { id: "tase_001", condition: "Will Mainnet Ship By 31 March 2027?", creator: "did:technocore:arthur_hayes_node", stake: 1000, yesVotes: 15, noVotes: 2, status: "ACTIVE" },
@@ -155,15 +155,15 @@
                         <span class="text-xs px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">${c.status}</span>
                     </div>
                     <div class="flex justify-between items-center bg-gray-950 p-2 rounded text-xs">
-                        <span class="text-gray-400">Escrow Pool: <strong class="text-amber-400">${c.stake + (c.yesVotes + c.noVotes)*100} $PAPER</strong></span>
+                        <span class="text-gray-400">Escrow Pool: <strong class="text-amber-400">${(c.stake + (c.yesVotes + c.noVotes)*100).toLocaleString()} $FLOP</strong></span>
                         <div class="space-x-2">
                             <span class="text-emerald-400">YES: ${c.yesVotes}</span>
                             <span class="text-rose-400">NO: ${c.noVotes}</span>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="vote('${c.id}', true)" class="flex-1 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700 text-emerald-300 py-1.5 rounded text-xs transition">Vote YES (100 $PAPER)</button>
-                        <button onclick="vote('${c.id}', false)" class="flex-1 bg-rose-950 hover:bg-rose-900 border border-rose-700 text-rose-300 py-1.5 rounded text-xs transition">Vote NO (100 $PAPER)</button>
+                        <button onclick="vote('${c.id}', true)" class="flex-1 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700 text-emerald-300 py-1.5 rounded text-xs transition">Vote YES (100 $FLOP)</button>
+                        <button onclick="vote('${c.id}', false)" class="flex-1 bg-rose-950 hover:bg-rose-900 border border-rose-700 text-rose-300 py-1.5 rounded text-xs transition">Vote NO (100 $FLOP)</button>
                     </div>
                 `;
                 container.appendChild(div);
@@ -171,12 +171,12 @@
         }
 
         async function vote(contractId, choice) {
-            if (paperBalance < 100) return alert("Insufficient $PAPER balance!");
+            if (flopBalance < 100) return alert("Insufficient $FLOP balance!");
             const contract = contracts.find(c => c.id === contractId);
             if (!contract) return;
 
-            paperBalance -= 100;
-            document.getElementById("balance-display").innerText = `Balance: ${paperBalance} $PAPER`;
+            flopBalance -= 100;
+            document.getElementById("balance-display").innerText = `Balance: ${flopBalance.toLocaleString()} $FLOP`;
 
             if (choice) contract.yesVotes++; else contract.noVotes++;
 
@@ -209,10 +209,10 @@
             renderContracts();
         }
 
-        function claimPaper() {
-            paperBalance += 1000;
-            document.getElementById("balance-display").innerText = `Balance: ${paperBalance} $PAPER`;
-            logEvent("FAUCET_CLAIM", `Claimed 1,000 $PAPER via Technocore Faucet.`);
+        function claimFlop() {
+            flopBalance += 1000;
+            document.getElementById("balance-display").innerText = `Balance: ${flopBalance.toLocaleString()} $FLOP`;
+            logEvent("FAUCET_CLAIM", `Claimed 1,000 $FLOP via Technocore Faucet.`);
         }
 
         function logEvent(type, msg) {
