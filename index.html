@@ -30,7 +30,7 @@
                     <p id="agent-did" class="text-xs text-emerald-400 font-mono">Generating Keypair...</p>
                 </div>
                 <button onclick="claimFlop()" class="px-3 py-1.5 bg-sky-950 hover:bg-sky-900 border border-sky-500 text-sky-300 rounded text-xs transition">
-                    + Claim 1,000 $FLOP
+                    + Claim Faucet (1,000 $FLOP)
                 </button>
             </div>
         </header>
@@ -43,14 +43,14 @@
                 <div class="bg-gray-950 p-5 cyber-border rounded-lg cyber-glow space-y-4">
                     <div class="flex justify-between items-center border-b border-gray-800 pb-3">
                         <h2 class="text-sm font-semibold text-sky-400 tracking-widest uppercase">Active Escrow Proposals</h2>
-                        <span id="balance-display" class="text-xs bg-gray-900 px-2.5 py-1 rounded border border-gray-700 text-amber-400">Balance: 1,000 $FLOP</span>
+                        <span id="balance-display" class="text-xs bg-gray-900 px-2.5 py-1 rounded border border-gray-700 text-amber-400">Balance: 0 $FLOP</span>
                     </div>
                     <div id="escrow-container" class="space-y-4"></div>
                 </div>
 
                 <!-- Form -->
                 <div class="bg-gray-950 p-5 cyber-border rounded-lg space-y-3">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Deploy New Autonomous Settlement Contract</h3>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Deploy New Autonomous Settlement Contract (1,000 $FLOP)</h3>
                     <div class="flex gap-2">
                         <input id="new-condition" type="text" placeholder="e.g., Will Technocore reach 10,000 registered DIDs before Q4?" class="flex-grow bg-gray-900 border border-gray-800 px-3 py-2 text-xs rounded text-white focus:outline-none focus:border-sky-500">
                         <button onclick="createContract()" class="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded transition">
@@ -84,12 +84,17 @@
         
         let userKeyPair = null;
         let userDID = "";
-        let flopBalance = 1000;
+        let flopBalance = parseInt(localStorage.getItem("tase_flop_balance")) || 0;
         
         let contracts = [
             { id: "tase_001", condition: "Will Mainnet Ship By 31 March 2027?", creator: "did:technocore:arthur_hayes_node", stake: 1000, yesVotes: 15, noVotes: 2, status: "ACTIVE" },
             { id: "tase_002", condition: "Will Technocore reach 5,000 DIDs?", creator: "did:technocore:node_0x82a", stake: 5000, yesVotes: 32, noVotes: 6, status: "ACTIVE" }
         ];
+
+        function updateBalanceUI() {
+            document.getElementById("balance-display").innerText = `Balance: ${flopBalance.toLocaleString()} $FLOP`;
+            localStorage.setItem("tase_flop_balance", flopBalance.toString());
+        }
 
         async function initCrypto() {
             try {
@@ -103,6 +108,7 @@
                 userDID = `did:technocore:${Math.random().toString(36).substring(2, 10)}`;
                 document.getElementById("agent-did").innerText = userDID;
             }
+            updateBalanceUI();
         }
 
         async function signPayload(payload) {
@@ -171,12 +177,15 @@
         }
 
         async function vote(contractId, choice) {
-            if (flopBalance < 100) return alert("Insufficient $FLOP balance!");
+            if (flopBalance < 100) {
+                return alert("Insufficient $FLOP balance! Please claim funds using the Faucet button at the top.");
+            }
+
             const contract = contracts.find(c => c.id === contractId);
             if (!contract) return;
 
             flopBalance -= 100;
-            document.getElementById("balance-display").innerText = `Balance: ${flopBalance.toLocaleString()} $FLOP`;
+            updateBalanceUI();
 
             if (choice) contract.yesVotes++; else contract.noVotes++;
 
@@ -195,6 +204,13 @@
             const condition = input.value.trim();
             if (!condition) return;
 
+            if (flopBalance < 1000) {
+                return alert("Deploying an escrow contract requires 1,000 $FLOP balance. Please claim from the Faucet first.");
+            }
+
+            flopBalance -= 1000;
+            updateBalanceUI();
+
             const newId = `tase_${Math.floor(Math.random() * 899 + 100)}`;
             const payload = { id: newId, condition, creator: userDID, timestamp: Date.now() };
             const sig = await signPayload(payload);
@@ -211,7 +227,7 @@
 
         function claimFlop() {
             flopBalance += 1000;
-            document.getElementById("balance-display").innerText = `Balance: ${flopBalance.toLocaleString()} $FLOP`;
+            updateBalanceUI();
             logEvent("FAUCET_CLAIM", `Claimed 1,000 $FLOP via Technocore Faucet.`);
         }
 
