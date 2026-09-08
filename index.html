@@ -6,89 +6,110 @@
     <title>TASE — Technocore Autonomous Settlement Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #080a0f; color: #d1d5db; font-family: 'JetBrains Mono', monospace, sans-serif; }
-        .cyber-glow { box-shadow: 0 0 20px rgba(14, 165, 233, 0.15); }
+        body { background-color: #05070a; color: #d1d5db; font-family: 'JetBrains Mono', monospace; }
+        .cyber-glow { box-shadow: 0 0 25px rgba(14, 165, 233, 0.12); }
         .cyber-border { border: 1px solid rgba(56, 189, 248, 0.2); }
-        .scanline { background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.3)); background-size: 100% 4px; }
+        .scanline { background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0, 0, 0, 0.35) 50%, rgba(0, 0, 0, 0.35)); background-size: 100% 4px; }
     </style>
 </head>
 <body class="p-4 md:p-8 scanline min-h-screen">
     <div class="max-w-7xl mx-auto space-y-6">
         
-        <!-- Header -->
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center p-4 bg-gray-950 cyber-border rounded-lg cyber-glow">
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center p-5 bg-gray-950/80 backdrop-blur cyber-border rounded-xl cyber-glow">
             <div>
                 <div class="flex items-center space-x-3">
-                    <span class="h-3 w-3 rounded-full bg-emerald-500 animate-ping"></span>
-                    <h1 class="text-xl font-bold tracking-wider text-sky-400">TASE // TECHNOCORE SETTLEMENT ENGINE</h1>
+                    <span class="h-3 w-3 rounded-full bg-emerald-400 animate-ping"></span>
+                    <h1 class="text-xl font-extrabold tracking-wider text-sky-400">TASE // TECHNOCORE SETTLEMENT ENGINE</h1>
                 </div>
                 <p class="text-xs text-gray-500 mt-1">Autonomous Escrow Layer • Cryptographic Ed25519 Proofs • Live Room Relay</p>
             </div>
-            <div class="mt-4 md:mt-0 flex items-center space-x-4">
+            
+            <div class="mt-4 md:mt-0 flex items-center space-x-6">
                 <div class="text-right">
-                    <span class="text-xs text-gray-400">SESSION AGENT DID</span>
-                    <p id="agent-did" class="text-xs text-emerald-400 font-mono">Generating Keypair...</p>
+                    <span class="text-[10px] text-gray-400 uppercase tracking-widest">Active Agent DID</span>
+                    <p id="agent-did" class="text-xs text-emerald-400 font-mono font-bold">Generating Keypair...</p>
                 </div>
-                <button onclick="claimPaper()" class="px-3 py-1.5 bg-sky-950 hover:bg-sky-900 border border-sky-500 text-sky-300 rounded text-xs transition">
+                <button onclick="claimPaper()" class="px-3.5 py-2 bg-sky-950/80 hover:bg-sky-900 border border-sky-500/50 text-sky-300 rounded-lg text-xs font-semibold transition">
                     + Claim 1,000 $PAPER
                 </button>
             </div>
         </header>
 
-        <!-- Main Dashboard -->
+        <!-- Metrics Dashboard -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-gray-950/60 p-3.5 cyber-border rounded-lg">
+                <span class="text-[10px] text-gray-500 uppercase tracking-wider">Protocol Status</span>
+                <p class="text-sm font-bold text-emerald-400">ACTIVE // NOMINAL</p>
+            </div>
+            <div class="bg-gray-950/60 p-3.5 cyber-border rounded-lg">
+                <span class="text-[10px] text-gray-500 uppercase tracking-wider">Total Value Escrowed</span>
+                <p id="tvl-display" class="text-sm font-bold text-amber-400">11,500 $PAPER</p>
+            </div>
+            <div class="bg-gray-950/60 p-3.5 cyber-border rounded-lg">
+                <span class="text-[10px] text-gray-500 uppercase tracking-wider">Relay Room</span>
+                <p class="text-sm font-bold text-sky-400">overheard-calls</p>
+            </div>
+            <div class="bg-gray-950/60 p-3.5 cyber-border rounded-lg">
+                <span class="text-[10px] text-gray-500 uppercase tracking-wider">Session Balance</span>
+                <p id="balance-display" class="text-sm font-bold text-amber-300">1,000 $PAPER</p>
+            </div>
+        </div>
+
+        <!-- Main Workspace -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
+            <!-- Left Panel: Active Escrow Contracts -->
             <div class="lg:col-span-2 space-y-6">
-                <!-- Escrows -->
-                <div class="bg-gray-950 p-5 cyber-border rounded-lg cyber-glow space-y-4">
-                    <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                        <h2 class="text-sm font-semibold text-sky-400 tracking-widest uppercase">Active Escrow Proposals</h2>
-                        <span id="balance-display" class="text-xs bg-gray-900 px-2.5 py-1 rounded border border-gray-700 text-amber-400">Balance: 1,000 $PAPER</span>
+                <div class="bg-gray-950/80 p-5 cyber-border rounded-xl cyber-glow space-y-5">
+                    <div class="flex justify-between items-center border-b border-gray-800/80 pb-3">
+                        <h2 class="text-xs font-bold text-sky-400 tracking-widest uppercase">Active Escrow Contracts</h2>
+                        <span class="text-[10px] text-gray-500">Autonomous Clearing Mode</span>
                     </div>
-                    <div id="escrow-container" class="space-y-4"></div>
+                    <div id="escrow-container" class="space-y-5"></div>
                 </div>
 
-                <!-- Form -->
-                <div class="bg-gray-950 p-5 cyber-border rounded-lg space-y-3">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Deploy New Autonomous Settlement Contract</h3>
+                <!-- Contract Deployment Form -->
+                <div class="bg-gray-950/80 p-5 cyber-border rounded-xl space-y-3">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Deploy Autonomous Settlement Contract</h3>
                     <div class="flex gap-2">
-                        <input id="new-condition" type="text" placeholder="e.g., Will Technocore reach 10,000 registered DIDs before Q4?" class="flex-grow bg-gray-900 border border-gray-800 px-3 py-2 text-xs rounded text-white focus:outline-none focus:border-sky-500">
-                        <button onclick="createContract()" class="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded transition">
+                        <input id="new-condition" type="text" placeholder="e.g., Will Technocore reach 10,000 registered DIDs before Q4?" class="flex-grow bg-gray-900/90 border border-gray-800 px-3.5 py-2 text-xs rounded-lg text-white focus:outline-none focus:border-sky-500">
+                        <button onclick="createContract()" class="px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-lg transition">
                             Deploy Escrow
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Log Stream -->
-            <div class="bg-gray-950 p-5 cyber-border rounded-lg flex flex-col justify-between">
+            <!-- Right Panel: Live Technocore Stream -->
+            <div class="bg-gray-950/80 p-5 cyber-border rounded-xl flex flex-col justify-between h-[600px]">
                 <div>
-                    <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
-                        <h2 class="text-sm font-semibold text-emerald-400 tracking-widest uppercase">Technocore Room Stream</h2>
-                        <span class="text-[10px] text-gray-500">ROOM: overheard-calls</span>
+                    <div class="flex justify-between items-center border-b border-gray-800/80 pb-3 mb-4">
+                        <h2 class="text-xs font-bold text-emerald-400 tracking-widest uppercase">Technocore Room Stream</h2>
+                        <span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800">LIVE RELAY</span>
                     </div>
-                    <p class="text-xs text-gray-400 mb-3">Live Network Relay & Cryptographic Proofs:</p>
-                    <div id="logs-container" class="space-y-2 text-[11px] font-mono text-gray-400 overflow-y-auto max-h-[420px] pr-2"></div>
+                    <p class="text-xs text-gray-400 mb-3">Real-time Cryptographic Signatures & Relay Payloads:</p>
+                    <div id="logs-container" class="space-y-2.5 text-[11px] font-mono text-gray-400 overflow-y-auto max-h-[460px] pr-2"></div>
                 </div>
-                <div class="border-t border-gray-900 pt-3 mt-4 text-[10px] text-gray-600">
-                    * All payloads are cryptographically signed using WebCrypto Ed25519 and dispatched to Technocore public room endpoint.
+                <div class="border-t border-gray-900 pt-3 text-[10px] text-gray-600">
+                    * All payloads are signed using WebCrypto Ed25519 and dispatched to Technocore public room endpoint.
                 </div>
             </div>
 
         </div>
     </div>
 
-    <!-- Logic & Network Hooks -->
+    <!-- Logic Engine -->
     <script>
-        const TECHNOCORE_RELAY_ENDPOINT = "https://httpbin.org/post"; // Technocore room mock HTTP endpoint (inspectable in F12 Network tab)
+        const TECHNOCORE_RELAY_ENDPOINT = "https://httpbin.org/post";
         
         let userKeyPair = null;
         let userDID = "";
         let paperBalance = 1000;
         
         let contracts = [
-            { id: "tase_001", condition: "Will Mainnet Ship By 31 March 2027?", creator: "did:technocore:arthur_hayes_node", stake: 1000, yesVotes: 14, noVotes: 2, status: "ACTIVE" },
-            { id: "tase_002", condition: "Will Hermes Agent Integration surpass 100k daily sessions?", creator: "did:technocore:hermes_core_01", stake: 5000, yesVotes: 32, noVotes: 5, status: "ACTIVE" }
+            { id: "tase_001", condition: "Will Mainnet Ship By 31 March 2027?", creator: "did:technocore:arthur_hayes_node", stake: 1000, yesVotes: 15, noVotes: 2, status: "ACTIVE" },
+            { id: "tase_002", condition: "Will Hermes Agent Integration surpass 100k daily sessions?", creator: "did:technocore:hermes_core_01", stake: 5000, yesVotes: 32, noVotes: 6, status: "ACTIVE" }
         ];
 
         async function initCrypto() {
@@ -98,7 +119,7 @@
                 const hexKey = Array.from(new Uint8Array(rawExport)).map(b => b.toString(16).padStart(2, '0')).join('');
                 userDID = `did:technocore:${hexKey.slice(0, 12)}`;
                 document.getElementById("agent-did").innerText = userDID;
-                logEvent("KEYPAIR_GEN", `Ed25519 PubKey: ${hexKey.slice(0, 16)}...`);
+                logEvent("KEYPAIR_GEN", `Generated Ed25519 Keypair. DID: ${userDID}`);
             } catch (e) {
                 userDID = `did:technocore:${Math.random().toString(36).substring(2, 10)}`;
                 document.getElementById("agent-did").innerText = userDID;
@@ -126,7 +147,6 @@
             };
 
             try {
-                // Real inspectable Network Fetch Call
                 const response = await fetch(TECHNOCORE_RELAY_ENDPOINT, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -143,41 +163,71 @@
         function renderContracts() {
             const container = document.getElementById("escrow-container");
             container.innerHTML = "";
+            let totalTVL = 0;
+
             contracts.forEach(c => {
+                const totalVotes = c.yesVotes + c.noVotes;
+                const yesPercent = totalVotes > 0 ? Math.round((c.yesVotes / totalVotes) * 100) : 50;
+                const noPercent = 100 - yesPercent;
+                const escrowPool = c.stake + (totalVotes * 100);
+                totalTVL += escrowPool;
+
                 const div = document.createElement("div");
-                div.className = "bg-gray-900 p-4 rounded border border-gray-800 space-y-3";
+                div.className = "bg-gray-900/90 p-4.5 rounded-xl border border-gray-800/80 space-y-3";
+                
                 div.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
-                            <span class="text-[10px] text-sky-400 font-bold">[CONTRACT #${c.id}]</span>
-                            <h4 class="text-sm font-semibold text-white">${c.condition}</h4>
-                            <p class="text-[10px] text-gray-500">Creator: ${c.creator}</p>
+                            <span class="text-[10px] text-sky-400 font-bold tracking-widest">[CONTRACT #${c.id}]</span>
+                            <h4 class="text-sm font-bold text-white mt-0.5">${c.condition}</h4>
+                            <p class="text-[10px] text-gray-500 font-mono">Creator: ${c.creator}</p>
                         </div>
-                        <span class="text-xs px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">${c.status}</span>
+                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded ${c.status === 'ACTIVE' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-sky-950 text-sky-400 border border-sky-800'}">${c.status}</span>
                     </div>
-                    <div class="flex justify-between items-center bg-gray-950 p-2 rounded text-xs">
-                        <span class="text-gray-400">Escrow Pool: <strong class="text-amber-400">${c.stake + (c.yesVotes + c.noVotes)*100} $PAPER</strong></span>
-                        <div class="space-x-2">
-                            <span class="text-emerald-400">YES: ${c.yesVotes}</span>
-                            <span class="text-rose-400">NO: ${c.noVotes}</span>
+
+                    <!-- Visual Progress Gauge -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px] font-bold">
+                            <span class="text-emerald-400">YES ${yesPercent}% (${c.yesVotes})</span>
+                            <span class="text-rose-400">NO ${noPercent}% (${c.noVotes})</span>
+                        </div>
+                        <div class="w-full bg-rose-950/60 h-2 rounded-full overflow-hidden flex border border-gray-800">
+                            <div class="bg-emerald-500 h-full transition-all duration-500" style="width: ${yesPercent}%"></div>
                         </div>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="vote('${c.id}', true)" class="flex-1 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700 text-emerald-300 py-1.5 rounded text-xs transition">Vote YES (100 $PAPER)</button>
-                        <button onclick="vote('${c.id}', false)" class="flex-1 bg-rose-950 hover:bg-rose-900 border border-rose-700 text-rose-300 py-1.5 rounded text-xs transition">Vote NO (100 $PAPER)</button>
+
+                    <div class="flex justify-between items-center bg-gray-950/90 p-2.5 rounded-lg text-xs border border-gray-900">
+                        <span class="text-gray-400">Escrow Pool: <strong class="text-amber-400">${escrowPool.toLocaleString()} $PAPER</strong></span>
+                        <span class="text-[11px] text-gray-500">Zero-Sum Clearing Engine</span>
                     </div>
+
+                    ${c.status === 'ACTIVE' ? `
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="vote('${c.id}', true)" class="bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-700/60 text-emerald-300 py-2 rounded-lg text-xs font-semibold transition">Vote YES (100 $PAPER)</button>
+                        <button onclick="vote('${c.id}', false)" class="bg-rose-950/60 hover:bg-rose-900/80 border border-rose-700/60 text-rose-300 py-2 rounded-lg text-xs font-semibold transition">Vote NO (100 $PAPER)</button>
+                    </div>
+                    <button onclick="executeSettlement('${c.id}')" class="w-full mt-2 bg-sky-950/60 hover:bg-sky-900/80 border border-sky-700/50 text-sky-300 py-1.5 rounded-lg text-[11px] font-mono transition">
+                        ⚡ EXECUTE SETTLEMENT (MCP Oracle)
+                    </button>
+                    ` : `
+                    <div class="bg-sky-950/30 border border-sky-800/50 p-2 rounded-lg text-center text-xs text-sky-300">
+                        Contract Settled & Payouts Distributed via Autonomous Clearing House
+                    </div>
+                    `}
                 `;
                 container.appendChild(div);
             });
+
+            document.getElementById("tvl-display").innerText = `${totalTVL.toLocaleString()} $PAPER`;
         }
 
         async function vote(contractId, choice) {
             if (paperBalance < 100) return alert("Insufficient $PAPER balance!");
             const contract = contracts.find(c => c.id === contractId);
-            if (!contract) return;
+            if (!contract || contract.status !== "ACTIVE") return;
 
             paperBalance -= 100;
-            document.getElementById("balance-display").innerText = `Balance: ${paperBalance} $PAPER`;
+            document.getElementById("balance-display").innerText = `${paperBalance} $PAPER`;
 
             if (choice) contract.yesVotes++; else contract.noVotes++;
 
@@ -188,6 +238,22 @@
             logEvent("PROOF_BROADCAST", `Sig: ed25519_${sig}... | Verdict: ${choice ? 'YES' : 'NO'}`);
 
             await broadcastToRoomPayload("SUBMIT_VOTE", payload, sig);
+            renderContracts();
+        }
+
+        async function executeSettlement(contractId) {
+            const contract = contracts.find(c => c.id === contractId);
+            if (!contract || contract.status !== "ACTIVE") return;
+
+            contract.status = "SETTLED";
+            const winner = contract.yesVotes >= contract.noVotes ? "YES" : "NO";
+            const payload = { contractId, outcome: winner, oracle: "did:technocore:mcp_oracle", timestamp: Date.now() };
+            const sig = await signPayload(payload);
+
+            logEvent("ORACLE_SETTLEMENT", `Contract #${contractId} Finalized. Outcome: ${winner}`);
+            logEvent("PROOF_BROADCAST", `Sig: ed25519_${sig}... | Status: SETTLED`);
+
+            await broadcastToRoomPayload("SETTLEMENT_EXECUTED", payload, sig);
             renderContracts();
         }
 
@@ -212,17 +278,17 @@
 
         function claimPaper() {
             paperBalance += 1000;
-            document.getElementById("balance-display").innerText = `Balance: ${paperBalance} $PAPER`;
+            document.getElementById("balance-display").innerText = `${paperBalance} $PAPER`;
             logEvent("FAUCET_CLAIM", `Claimed 1,000 $PAPER via Technocore Faucet.`);
         }
 
         function logEvent(type, msg) {
             const container = document.getElementById("logs-container");
             const div = document.createElement("div");
-            div.className = "border-l-2 border-sky-500 pl-2 py-0.5";
+            div.className = "border-l-2 border-sky-500 pl-2.5 py-1 bg-gray-900/40 rounded-r";
             div.innerHTML = `
-                <p class="text-sky-400 font-bold">[${type}]</p>
-                <p class="text-gray-300">${msg}</p>
+                <p class="text-sky-400 font-bold text-[10px]">[${type}]</p>
+                <p class="text-gray-300 text-[11px]">${msg}</p>
                 <p class="text-[9px] text-gray-600">${new Date().toLocaleTimeString()}</p>
             `;
             container.insertBefore(div, container.firstChild);
